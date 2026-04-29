@@ -15,23 +15,103 @@
 
 ## 폴더 구조
 
-```
-PDSI/
-├── README.md
-├── arc_fig.ipynb
-└── code/
-    ├── CNN/
-    │   ├── CA_76/
-    │   ├── CA_128/
-    │   ├── CA_152/
-    │   └── README.md
-    ├── SDM/
-    │   ├── SDM.ipynb
-    │   └── process_suitability_maps.ipynb
-    └── Weight/
-        ├── weight_generate.ipynb
-        └── weight_figure.ipynb
-```
+2026 CA/
+├── PDSI/
+│   ├── README.md
+│   ├── arc_fig.ipynb
+│   └── code/
+│       ├── CNN/
+│       │   ├── CA_76/
+│       │   │   ├── CA_CNN_learning_76.ipynb
+│       │   │   ├── PDSI_latin.ipynb
+│       │   │   └── PDSI_midpoint.ipynb
+│       │   ├── CA_128/
+│       │   │   ├── CA_CNN_learning_128.ipynb
+│       │   │   ├── PDSI_latin.ipynb
+│       │   │   └── PDSI_midpoint.ipynb
+│       │   ├── CA_152/
+│       │   │   ├── CA_CNN_learning_152.ipynb
+│       │   │   ├── PDSI_latin.ipynb
+│       │   │   └── PDSI_midpoint.ipynb
+│       │   ├── CA_256/
+│       │   │   ├── CA_CNN_learning_256.ipynb
+│       │   │   ├── PDSI_latin.ipynb
+│       │   │   └── PDSI_midpoint.ipynb
+│       │   └── README.md
+│       ├── SDM/
+│       │   ├── SDM.ipynb
+│       │   └── process_suitability_maps.ipynb
+│       └── Weight/
+│           ├── weight_figure.ipynb
+│           └── weight_generate.ipynb
+└── PDSI_data/
+    ├── CA_76/
+    │   ├── checkpoints/
+    │   │   ├── model_checkpoint_1.weights.h5
+    │   │   ├── model_checkpoint_2.weights.h5
+    │   │   ├── model_checkpoint_3.weights.h5
+    │   │   ├── model_checkpoint_4.weights.h5
+    │   │   └── model_checkpoint_5.weights.h5
+    │   ├── models/
+    │   │   ├── model_1.keras
+    │   │   ├── model_2.keras
+    │   │   ├── model_3.keras
+    │   │   ├── model_4.keras
+    │   │   └── model_5.keras
+    │   └── Results/
+    ├── SDM_data/
+    │   ├── latin/
+    │   │   ├── find_local.ipynb
+    │   │   ├── local_index.csv
+    │   │   ├── TES_ensemble/
+    │   │   └── TES_maxent/
+    │   └── midpoint/
+    │       ├── local_index.csv
+    │       ├── local_oh.csv
+    │       ├── TES_ensemble/
+    │       │   ├── current.csv
+    │       │   ├── ssp126_2030.csv
+    │       │   ├── ssp126_2050.csv
+    │       │   ├── ssp126_2070.csv
+    │       │   ├── ssp126_2090.csv
+    │       │   ├── ssp245_2030.csv
+    │       │   ├── ssp245_2050.csv
+    │       │   ├── ssp245_2070.csv
+    │       │   ├── ssp245_2090.csv
+    │       │   ├── ssp585_2030.csv
+    │       │   ├── ssp585_2050.csv
+    │       │   ├── ssp585_2070.csv
+    │       │   └── ssp585_2090.csv
+    │       ├── TES_ensemble_old/
+    │       │   ├── current.csv
+    │       │   ├── ssp126_2030.csv
+    │       │   ├── ssp126_2050.csv
+    │       │   ├── ssp126_2070.csv
+    │       │   ├── ssp126_2090.csv
+    │       │   ├── ssp245_2030.csv
+    │       │   ├── ssp245_2050.csv
+    │       │   ├── ssp245_2070.csv
+    │       │   ├── ssp245_2090.csv
+    │       │   ├── ssp585_2030.csv
+    │       │   ├── ssp585_2050.csv
+    │       │   ├── ssp585_2070.csv
+    │       │   └── ssp585_2090.csv
+    │       └── TES_maxent/
+    │           ├── ssp126_2030.csv
+    │           ├── ssp126_2050.csv
+    │           ├── ssp126_2070.csv
+    │           ├── ssp126_2090.csv
+    │           ├── ssp245_2030.csv
+    │           ├── ssp245_2050.csv
+    │           ├── ssp245_2070.csv
+    │           ├── ssp245_2090.csv
+    │           ├── ssp585_2030.csv
+    │           ├── ssp585_2050.csv
+    │           ├── ssp585_2070.csv
+    │           └── ssp585_2090.csv
+    └── weights/
+        ├── Weight_all.npy
+        └── WeightByInitial.npy
 
 ### 중요한 포인트
 
