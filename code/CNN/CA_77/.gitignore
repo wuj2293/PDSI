@@ -6,7 +6,6 @@ Jin/
 
 # Kept locally, not published: only the type1/type2 (new-weight) computation
 # notebooks are tracked in this folder.
-CA_CNN_learning_77.ipynb
 PDSI_global_random.ipynb
 PDSI_latin.ipynb
 PDSI_boxplot_100.ipynb
