@@ -1,11 +1,14 @@
 # WeightByInitial correction (2026-09)
 
-`weight_generate.ipynb` (original) built `WeightByInitial.npy` by, for each
-(rule, initial) cell, averaging only **10** random arrangements and then
-fitting a **linear regression across the full 0–400 generation trajectory**
-to read off a value at generation 60. Independent validation found this
-introduces a large, systematic bias (median 1.9–2.3, up to ~48 on the
-0–400 scale) because most of the fitted range lies well past generation 60.
+The original `weight_generate.ipynb` / `weight_figure.ipynb` (removed
+2026-09-23, see git history if needed) built `WeightByInitial.npy` by, for
+each (rule, initial) cell, averaging only **10** random arrangements and
+then fitting a **linear regression across the full 0–400 generation
+trajectory** to read off a value at generation 60. Independent validation
+found this introduces a large, systematic bias (median 1.9–2.3, up to ~48
+on the 0–400 scale) because most of the fitted range lies well past
+generation 60. Both notebooks are fully superseded by the three scripts
+below and have been removed from this folder.
 
 `compute_weight_by_initial.py` replaces this: no regression, and
 `N_REPEATS` (default 100) independent random arrangements read directly at
