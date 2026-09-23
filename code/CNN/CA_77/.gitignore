@@ -3,3 +3,16 @@
 __pycache__/
 *.pyc
 Jin/
+
+# Kept locally, not published: only the type1/type2 (new-weight) computation
+# notebooks are tracked in this folder.
+CA_CNN_learning_77.ipynb
+PDSI_global_random.ipynb
+PDSI_latin.ipynb
+PDSI_boxplot_100.ipynb
+PDSI_boxplot_81scenarios.ipynb
+PDSI_global_81scenarios_Anseong.ipynb
+PDSI_global_81scenarios_regions.ipynb
+run_all.sh
+run_log.txt
+run_rest.sh
