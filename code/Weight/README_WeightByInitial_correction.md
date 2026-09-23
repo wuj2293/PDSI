@@ -17,11 +17,22 @@ figure (77-rule panel grid) using the same direct-read, no-regression
 methodology, for visual/manuscript use.
 
 Both scripts import from `eca_core.py`
-(`rule_lut`/`seed_states`/`evolve_step`/`direct_read_table`/`example_trajectories`),
-which has **not** been added here yet — the file received under that name
-turned out to be a different, unrelated script (a PDSI repeated-binarization
-stability check), not the ECA simulation core the other two scripts need.
-Get the correct `eca_core.py` from Jin before running either script locally.
+(`rule_lut`/`seed_states`/`evolve_step`/`direct_read_table`/`example_trajectories`).
+**Update (2026-09-23): received and added.** The file first sent under that
+name turned out to be a different, unrelated script (a PDSI
+repeated-binarization stability check, see
+`code/CNN/CA_77/Jin/pdsi_stability_verification_MISLABELED_as_eca_core.py`
+for that content) — the correct `eca_core.py` was requested and re-sent, and
+is now in this folder.
+
+**Validation:** ran `compute_weight_by_initial.py` end-to-end (all 77 rules,
+n-repeats=100, default seed) and compared all 30,800 (rule, initial) cells
+against the `WeightByInitial_new.csv` already in use
+(`DATA/weights/WeightByInitial_new.csv`, generated independently by Jin):
+mean absolute difference 0.37 (on a 0–400 scale), and only 0.13% of cells
+differ by more than 3 combined standard errors — matching the ~0.13-0.27%
+expected from Monte-Carlo noise alone. The two are the same table up to
+random-seed noise, confirming the three scripts reproduce it correctly.
 
 ## Current pipeline status
 
