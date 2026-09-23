@@ -1,0 +1,12 @@
+# 이 저장소의 노트북/스크립트를 실행하는 데 필요한 패키지입니다.
+# 버전은 실제로 검증에 쓴 로컬 환경(tensorflow-env, Python 3.12) 기준입니다.
+numpy==2.5.2
+pandas==3.0.5
+matplotlib==3.11.1
+tensorflow==2.21.0
+scikit-learn==1.9.0
+tqdm==4.70.0
+h5py==3.14.0
+openpyxl==3.1.5
+scipy==1.18.1
+python-docx==1.2.0
