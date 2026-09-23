@@ -17,10 +17,9 @@
 ```
 
 `DATA`는 기본적으로 `PDSI`의 형제 폴더로 자동 탐색됩니다(환경변수 `PDSI_DATA_ROOT`로 다른 위치
-지정 가능, `code/CNN/CA_77`·`code/SDM/find_local.ipynb`에 적용됨). `SDM/` 폴더는 `SDM.ipynb`,
-`process_suitability_maps.ipynb`가 참조하는데, **이 두 노트북은 아직 하드코딩된 다른 사용자
-경로(`/Users/mkim/...`)를 그대로 쓰고 있어서 실행 전에 직접 경로를 고쳐야 합니다** (이번에는
-이 두 파일의 경로는 손대지 않았습니다).
+지정 가능, `code/CNN/CA_77`에 적용됨). `SDM/` 폴더는 `SDM.ipynb`, `process_suitability_maps.ipynb`가
+참조하는데, **이 두 노트북은 아직 하드코딩된 다른 사용자 경로(`/Users/mkim/...`)를 그대로 쓰고
+있어서 실행 전에 직접 경로를 고쳐야 합니다** (이번에는 이 두 파일의 경로는 손대지 않았습니다).
 
 ## 1. 원본 데이터 (코드로 생성 불가)
 
@@ -39,14 +38,20 @@
 | 경로 | 내용 | 만드는 코드 | 입력 |
 |---|---|---|---|
 | `DATA/SDM_data/midpoint/<species>/ssp*.csv` (12개) | 시나리오·시기별 서식지 적합성 확률(격자) | `SDM.ipynb`(MaxEnt 학습·예측, `.tif` 생성) → `process_suitability_maps.ipynb`(`.tif`→`.csv` 변환) | 위 1번 원본 데이터 |
-| `DATA/SDM_data/latin/local_index.csv`, `<species>/{sampling,all}.pkl` | 행정구역별 400칸 LHS 샘플 | `find_local.ipynb` **또는** `process_suitability_maps.ipynb`(둘 다 같은 산출물을 만듦, 아래 참고) | `ssp*.csv` 12개 + `latlong_ex.xlsx` |
+| `DATA/SDM_data/latin/local_index.csv`, `<species>/{sampling,all}.pkl` | 행정구역별 400칸 LHS 샘플 | `process_suitability_maps.ipynb` | `ssp*.csv` 12개 + `latlong_ex.xlsx` |
 | `DATA/CA_77/models/model_1~5.keras` | 학습된 CNN 앙상블 | `code/CNN/CA_77/CA_CNN_learning_77.ipynb`(자체 CA 시뮬레이션으로 학습 데이터도 생성, 수 시간 소요) | 없음(완전 자체 생성) |
 | `DATA/weights/WeightByInitial_new.csv` | 규칙(rule)×초기값(initial)별 60세대 시점 보정 lookup 값 | `code/Weight/compute_weight_by_initial.py`(약 5~6분) | 없음(완전 자체 생성) |
 | `DATA/Results/` | 계산 결과·그림 | type1/type2 노트북이 자동 생성 | 위 전부 |
 
-**⚠️ 중복 발견:** `find_local.ipynb`와 `process_suitability_maps.ipynb`가 둘 다 각자
+**참고 (해결됨):** 이전에는 `find_local.ipynb`와 `process_suitability_maps.ipynb`가 둘 다
 "`ssp*.csv` → 행정구역별 LHS 400 샘플링 → `all.pkl`/`sampling.pkl`/`local_index.csv` 저장"을
-수행합니다. 어느 쪽이 실제로 쓰는 파이프라인인지, 왜 두 벌이 있는지는 확인이 필요합니다.
+각자 중복으로 수행했습니다. `process_suitability_maps.ipynb`(`.tif`→CSV 변환까지 포함하는 상위
+호환)를 정식 파이프라인으로 삼고 `find_local.ipynb`는 삭제했습니다.
+
+같은 지역이면 2030/2050/2070/2090 시기와 무관하게 같은 400개 격자 위치가 뽑히도록
+설계되어 있습니다(LHS 샘플을 시나리오 루프 밖에서 한 번만 뽑고, 지역별 유효 픽셀 개수로만
+인덱싱). 다만 이건 **시기마다 유효 픽셀(NoData가 아닌 칸) 마스크가 완전히 같다**는 전제
+하에서만 성립하며, `SDM.ipynb`를 아직 실행한 적이 없어 실제 데이터로는 검증하지 못했습니다.
 
 ## 요약: 지금 당장 있어야 하는 것 vs 없어도 되는 것
 

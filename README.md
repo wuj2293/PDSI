@@ -29,9 +29,12 @@ CNN 학습(`CA_CNN_learning_77.ipynb`)은 GPU가 있으면 훨씬 빠릅니다.
     지역별 PDSI(SI)를 계산. **type1**(cell-wise, 이진화 난수를 4개 시기마다 독립적으로 뽑음)과
     **type2**(global, 이진화 난수를 위치별로 뽑아 4개 시기가 공유)를 함께 계산·저장합니다.
 - `code/SDM/`
-  - `SDM.ipynb`, `process_suitability_maps.ipynb` — 종분포모델(SDM) 적합도 지도 생성
-  - `find_local.ipynb` — SDM 산출물(격자별 확률)을 행정구역별로 나누고, 라틴 하이퍼큐브
-    샘플링(LHS)으로 20×20(400칸)을 뽑아 `sampling.pkl`/`all.pkl`/`local_index.csv`로 저장
+  - `SDM.ipynb` — 발견 지점 + 환경변수 래스터로 MaxEnt 학습, 시나리오별 서식지 적합도
+    GeoTIFF(`.tif`) 생성
+  - `process_suitability_maps.ipynb` — 그 `.tif`를 CSV로 변환하고, 행정구역별로 나눈 뒤
+    라틴 하이퍼큐브 샘플링(LHS)으로 20×20(400칸)을 뽑아 `sampling.pkl`/`all.pkl`/
+    `local_index.csv`로 저장하는 정식 파이프라인(이전에 있던, 같은 일을 하던
+    `find_local.ipynb`는 삭제했습니다)
 - `code/Weight/`
   - `eca_core.py`, `compute_weight_by_initial.py`, `build_regression77_docx.py` — CA 규칙별
     "초기값 → 60세대 시점 셀 개수" 보정 lookup 테이블(`WeightByInitial_new.csv`)을 만드는 코드.
@@ -43,7 +46,8 @@ CNN 학습(`CA_CNN_learning_77.ipynb`)은 GPU가 있으면 훨씬 빠릅니다.
 이미 `DATA/`에 필요한 파일이 다 있다면(→ `DATA_REQUIREMENTS.md`) 1~3번은 건너뛰고 바로
 `PDSI_newweight_81scenarios_regions.ipynb`부터 실행하면 됩니다.
 
-1. `code/SDM/find_local.ipynb` — SDM 원본 CSV로부터 `sampling.pkl`/`local_index.csv` 생성
+1. `code/SDM/SDM.ipynb` → `code/SDM/process_suitability_maps.ipynb` — 원본 발견 지점·환경변수
+   래스터로부터 `sampling.pkl`/`local_index.csv` 생성
 2. `code/Weight/compute_weight_by_initial.py` — `WeightByInitial_new.csv` 생성
    ```bash
    cd code/Weight
