@@ -8,3 +8,6 @@ Jin/
 # and logs of the current run.
 archive/
 *_log.txt
+
+# 확인 중인 분석 스크립트 (검증 후 올림)
+sensitivity_sampling_seed.py

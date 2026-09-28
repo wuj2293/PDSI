@@ -29,10 +29,7 @@ CNN 학습(`CA_CNN_learning_77.ipynb`)은 GPU가 있으면 훨씬 빠릅니다.
     지역별 PDSI(SI)를 계산. **type1**(cell-wise, 이진화 난수를 4개 시기마다 독립적으로 뽑음)과
     **type2**(global, 이진화 난수를 위치별로 뽑아 4개 시기가 공유)를 함께 계산·저장합니다.
 - `code/SDM/`
-  - `SDM.ipynb` — 발견 지점 + 환경변수 래스터로 MaxEnt 학습, 시나리오별 서식지 적합도
-    GeoTIFF(`.tif`) 생성 (Python elapid, `DATA/SDM_data/Maxent_elapid/`). 제출 논문의 MaxEnt 3.4.1
-    결과와 값이 달라 CA 입력으로는 쓰지 않습니다 → `DATA_REQUIREMENTS.md`
-  - `make_all_pkl.ipynb` — MaxEnt 지도(`DATA/SDM_data/Maxent/ssp*.csv`)에 행정구역을 붙여 지역별로 나눈
+  - `make_all_pkl.ipynb` — 외부에서 받은 MaxEnt 3.4.1 지도(`DATA/SDM_data/Maxent/ssp*.csv`)에 행정구역을 붙여 지역별로 나눈
     `all.pkl`/`local_index.csv` 생성
   - `make_sampling_pkl.ipynb` — `all.pkl`에서 지역마다 셀 단위 1차원 LHS로 400칸을 뽑아(중복 제거, 20×20 배치는 무작위)
     `sampling.pkl` 생성

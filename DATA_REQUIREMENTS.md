@@ -12,33 +12,27 @@
 ```
 어떤-폴더/
 ├── PDSI/     <- 이 저장소 (git clone)
-├── DATA/     <- 2번(생성된 데이터): 모델, weight, 샘플링 결과 등
-└── SDM/      <- 1번(원본 데이터): 종 발견지점, 환경변수 래스터
+└── DATA/     <- 1번(원본: MaxEnt 지도, 행정구역 매핑표) + 2번(생성된 데이터: 모델, weight, 샘플링 결과 등)
 ```
 
 `DATA`는 기본적으로 `PDSI`의 형제 폴더로 자동 탐색됩니다(환경변수 `PDSI_DATA_ROOT`로 다른 위치
-지정 가능). `code/CNN/CA_77`, `code/SDM/SDM.ipynb`, `code/SDM/make_all_pkl.ipynb`, `code/SDM/make_sampling_pkl.ipynb` 모두
-같은 방식으로 경로를 찾습니다. `SDM.ipynb`는 원본을 `SDM/`에서 읽고 서식지 적합성 지도를
-`DATA/SDM_data/Maxent_elapid/`에 저장합니다.
+지정 가능). `code/CNN/CA_77`, `code/SDM/make_all_pkl.ipynb`, `code/SDM/make_sampling_pkl.ipynb` 모두
+같은 방식으로 경로를 찾습니다.
 
 ## 1. 원본 데이터 (코드로 생성 불가)
 
 | 경로 | 내용 | 현재 로컬에 있는 위치 |
 |---|---|---|
-| `SDM/붉은귀거북/붉은귀거북_생태원&생물학과&GBIF.csv` | 붉은귀거북 발견 지점(위경도) 실측 기록 | 있음 |
-| `SDM/env/current/*.asc` | 현재 기후 환경변수 래스터(bio_1, bio_2, slope, river 등) | 있음 (~39MB) |
-| `SDM/env/ssp{126,245,585}_{2030,2050,2070,2090}/*.asc` (12세트) | 미래 기후 시나리오별 환경변수 래스터 | 있음 (세트당 ~38MB, 총 ~500MB) |
+| `DATA/SDM_data/Maxent/ssp{126,245,585}_{2030,2050,2070,2090}.csv` (12개) | 붉은귀거북 서식지 적합성 확률(1 km 격자, 열 `x, y, {시나리오}`) — **외부에서 받은 MaxEnt 3.4.1 결과** (`Trachemys_scripta_elegans_{시나리오}_avg.asc`를 격자점 CSV로 변환한 것, 2025-03). CA 입력으로 쓰는 지도 | 있음 |
 | `DATA/SDM_data/latin/latlong_ex.xlsx` | 격자 좌표 ↔ 행정구역(SIG_ENG_NM) 매핑표 | 있음 |
 
-이 4가지는 실측 데이터/외부에서 받은 GIS 자료라 저장소의 어떤 코드로도 다시 만들 수 없습니다.
-분실하면 안 됩니다.
+이 2가지는 외부에서 받은 자료라 저장소의 어떤 코드로도 다시 만들 수 없습니다. 분실하면 안 됩니다.
+MaxEnt 모델 자체(발견 지점, 환경변수, 실행 설정)는 이 저장소 범위 밖입니다.
 
 ## 2. 생성된 데이터 (코드가 만들어냄)
 
 | 경로 | 내용 | 만드는 코드 | 입력 |
 |---|---|---|---|
-| `DATA/SDM_data/Maxent/ssp*.csv` (12개) | 시나리오·시기별 서식지 적합성 확률(격자) — **CA 입력으로 쓰는 것** | MaxEnt 프로그램 결과 `Trachemys_scripta_elegans_*_avg.asc` → `SDM/Maxent_result_figure_and_for_CA.R`(2025-03, 저장소 밖) | 위 1번 원본 데이터 |
-| `DATA/SDM_data/Maxent_elapid/suitability_map_{current,ssp*}.tif` (13개) | Python(elapid)으로 다시 돌린 MaxEnt 결과(2025-11). 위 CSV와 값이 다름(상관 0.85~0.93, 평균 0.06~0.15 높음) — CA 입력에는 쓰지 않음 | `SDM.ipynb` | 위 1번 원본 데이터 |
 | `DATA/SDM_data/latin/local_index.csv`, `TES_maxent/all.pkl` | 행정구역별 전체 셀 | `code/SDM/make_all_pkl.ipynb` | `Maxent/ssp*.csv` 12개 + `latlong_ex.xlsx` |
 | `DATA/SDM_data/latin/TES_maxent/sampling.pkl` | 행정구역별 400칸 1차원 LHS 샘플(중복 제거) | `code/SDM/make_sampling_pkl.ipynb` | `all.pkl` |
 | `DATA/CA_77/models/model_1~5.keras` | 학습된 CNN 앙상블 | `code/CNN/CA_77/CA_CNN_learning_77.ipynb`(자체 CA 시뮬레이션으로 학습 데이터도 생성, 수 시간 소요) | 없음(완전 자체 생성) |
@@ -60,9 +54,8 @@
 
 ## 요약: 지금 당장 있어야 하는 것 vs 없어도 되는 것
 
-- **`latlong_ex.xlsx`만 있으면 된다는 건 아닙니다.** `ssp*.csv`(서식지 적합성)까지 만들려면
-  `SDM/`의 발견지점 데이터와 환경변수 래스터 13세트가 먼저 있어야 합니다. 다행히 로컬에 이미
-  있습니다.
+- **꼭 있어야 하는 원본은 두 가지뿐입니다:** MaxEnt 지도(`Maxent/ssp*.csv` 12개)와 `latlong_ex.xlsx`.
+  이 둘로 `all.pkl`과 `sampling.pkl`을 만들 수 있습니다.
 - 반대로 **CNN 모델**과 **weight 테이블**은 정말로 코드만으로(외부 데이터 없이) 처음부터
   다시 만들 수 있습니다.
 - `DATA/`에 이미 만들어진 산출물(모델, weight, `sampling.pkl` 등)이 있다면, 그걸 다시 만드는
