@@ -17,9 +17,9 @@
 ```
 
 `DATA`는 기본적으로 `PDSI`의 형제 폴더로 자동 탐색됩니다(환경변수 `PDSI_DATA_ROOT`로 다른 위치
-지정 가능, `code/CNN/CA_77`에 적용됨). `SDM/` 폴더는 `SDM.ipynb`, `process_suitability_maps.ipynb`가
-참조하는데, **이 두 노트북은 아직 하드코딩된 다른 사용자 경로(`/Users/mkim/...`)를 그대로 쓰고
-있어서 실행 전에 직접 경로를 고쳐야 합니다** (이번에는 이 두 파일의 경로는 손대지 않았습니다).
+지정 가능). `code/CNN/CA_77`, `code/SDM/SDM.ipynb`, `code/SDM/make_all_pkl.ipynb`, `code/SDM/make_sampling_pkl.ipynb` 모두
+같은 방식으로 경로를 찾습니다. `SDM.ipynb`는 원본을 `SDM/`에서 읽고 서식지 적합성 지도를
+`DATA/SDM_data/Maxent_elapid/`에 저장합니다.
 
 ## 1. 원본 데이터 (코드로 생성 불가)
 
@@ -37,21 +37,26 @@
 
 | 경로 | 내용 | 만드는 코드 | 입력 |
 |---|---|---|---|
-| `DATA/SDM_data/midpoint/<species>/ssp*.csv` (12개) | 시나리오·시기별 서식지 적합성 확률(격자) | `SDM.ipynb`(MaxEnt 학습·예측, `.tif` 생성) → `process_suitability_maps.ipynb`(`.tif`→`.csv` 변환) | 위 1번 원본 데이터 |
-| `DATA/SDM_data/latin/local_index.csv`, `<species>/{sampling,all}.pkl` | 행정구역별 400칸 LHS 샘플 | `process_suitability_maps.ipynb` | `ssp*.csv` 12개 + `latlong_ex.xlsx` |
+| `DATA/SDM_data/Maxent/ssp*.csv` (12개) | 시나리오·시기별 서식지 적합성 확률(격자) — **CA 입력으로 쓰는 것** | MaxEnt 프로그램 결과 `Trachemys_scripta_elegans_*_avg.asc` → `SDM/Maxent_result_figure_and_for_CA.R`(2025-03, 저장소 밖) | 위 1번 원본 데이터 |
+| `DATA/SDM_data/Maxent_elapid/suitability_map_{current,ssp*}.tif` (13개) | Python(elapid)으로 다시 돌린 MaxEnt 결과(2025-11). 위 CSV와 값이 다름(상관 0.85~0.93, 평균 0.06~0.15 높음) — CA 입력에는 쓰지 않음 | `SDM.ipynb` | 위 1번 원본 데이터 |
+| `DATA/SDM_data/latin/local_index.csv`, `TES_maxent/all.pkl` | 행정구역별 전체 셀 | `code/SDM/make_all_pkl.ipynb` | `Maxent/ssp*.csv` 12개 + `latlong_ex.xlsx` |
+| `DATA/SDM_data/latin/TES_maxent/sampling.pkl` | 행정구역별 400칸 1차원 LHS 샘플(중복 제거) | `code/SDM/make_sampling_pkl.ipynb` | `all.pkl` |
 | `DATA/CA_77/models/model_1~5.keras` | 학습된 CNN 앙상블 | `code/CNN/CA_77/CA_CNN_learning_77.ipynb`(자체 CA 시뮬레이션으로 학습 데이터도 생성, 수 시간 소요) | 없음(완전 자체 생성) |
 | `DATA/weights/WeightByInitial_new.csv` | 규칙(rule)×초기값(initial)별 60세대 시점 보정 lookup 값 | `code/Weight/compute_weight_by_initial.py`(약 5~6분) | 없음(완전 자체 생성) |
 | `DATA/Results/` | 계산 결과·그림 | type1/type2 노트북이 자동 생성 | 위 전부 |
 
-**참고 (해결됨):** 이전에는 `find_local.ipynb`와 `process_suitability_maps.ipynb`가 둘 다
-"`ssp*.csv` → 행정구역별 LHS 400 샘플링 → `all.pkl`/`sampling.pkl`/`local_index.csv` 저장"을
-각자 중복으로 수행했습니다. `process_suitability_maps.ipynb`(`.tif`→CSV 변환까지 포함하는 상위
-호환)를 정식 파이프라인으로 삼고 `find_local.ipynb`는 삭제했습니다.
+**샘플링 방식:** `make_sampling_pkl.ipynb`는 래스터 순서(북→남, 서→동)로 정렬한 셀에 **셀 단위 1차원 LHS**를 적용합니다.
+후보 ≥ 400이면 셀을 400개 연속 묶음으로 나눠 묶음마다 하나씩 뽑아 중복이 없고(큰 묶음 위치는 무작위로 해 모든 셀의 추출 확률을 같게 함),
+후보 < 400이면 모든 셀을 ⌊400/n⌋~⌈400/n⌉번 고르게 씁니다. 20×20 배치는 무작위, 난수는 `SEED=0` + 지역 이름(md5)으로 고정합니다.
+위치는 지역마다 한 번만 정하므로 모든 시기·시나리오에서 같은 400개 지점이 같은 칸에 쓰입니다.
 
-같은 지역이면 2030/2050/2070/2090 시기와 무관하게 같은 400개 격자 위치가 뽑히도록
-설계되어 있습니다(LHS 샘플을 시나리오 루프 밖에서 한 번만 뽑고, 지역별 유효 픽셀 개수로만
-인덱싱). 다만 이건 **시기마다 유효 픽셀(NoData가 아닌 칸) 마스크가 완전히 같다**는 전제
-하에서만 성립하며, `SDM.ipynb`를 아직 실행한 적이 없어 실제 데이터로는 검증하지 못했습니다.
+- 기존(제출 논문) 샘플 `TES_maxent/archive/sampling_1D_original.pkl`: 같은 1차원 LHS지만 연속값을 정수로 잘라 중복·누락이 있었고 시드 미고정.
+- 2Dfixed 샘플 `TES_maxent/archive/sampling_2Dfixed_20260926.pkl`(x·y 순위 공간 2D 층화): 중복은 없지만 불규칙한 지역에서 경계 셀을 과하게 뽑아
+  평균 적합도가 치우쳐(시드 20개 검증, 34개 중 19개 지역, 최대 0.027) 쓰지 않음. 그 PDSI 결과는 `DATA/Results/archive_2D_sampling_20260926/`.
+
+**제출 논문과의 관계:** 제출본 Supplementary Data 2의 PDSI는 `CA_old/2025 논문용/CA2025/슈퍼컴_data/76_SI_data_latin.csv`와
+값이 모두 같고, 그 계산의 `initial` 값은 위 `Maxent/ssp*.csv` + 기존 1D `sampling.pkl`
+(`PDSI_data/SDM_data/latin/TES_maxent/`에 보존)로 계산한 기대값과 맞습니다. 즉 제출 결과도 같은 MaxEnt 지도를 썼습니다.
 
 ## 요약: 지금 당장 있어야 하는 것 vs 없어도 되는 것
 

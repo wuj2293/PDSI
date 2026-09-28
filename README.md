@@ -30,11 +30,12 @@ CNN 학습(`CA_CNN_learning_77.ipynb`)은 GPU가 있으면 훨씬 빠릅니다.
     **type2**(global, 이진화 난수를 위치별로 뽑아 4개 시기가 공유)를 함께 계산·저장합니다.
 - `code/SDM/`
   - `SDM.ipynb` — 발견 지점 + 환경변수 래스터로 MaxEnt 학습, 시나리오별 서식지 적합도
-    GeoTIFF(`.tif`) 생성
-  - `process_suitability_maps.ipynb` — 그 `.tif`를 CSV로 변환하고, 행정구역별로 나눈 뒤
-    라틴 하이퍼큐브 샘플링(LHS)으로 20×20(400칸)을 뽑아 `sampling.pkl`/`all.pkl`/
-    `local_index.csv`로 저장하는 정식 파이프라인(이전에 있던, 같은 일을 하던
-    `find_local.ipynb`는 삭제했습니다)
+    GeoTIFF(`.tif`) 생성 (Python elapid, `DATA/SDM_data/Maxent_elapid/`). 제출 논문의 MaxEnt 3.4.1
+    결과와 값이 달라 CA 입력으로는 쓰지 않습니다 → `DATA_REQUIREMENTS.md`
+  - `make_all_pkl.ipynb` — MaxEnt 지도(`DATA/SDM_data/Maxent/ssp*.csv`)에 행정구역을 붙여 지역별로 나눈
+    `all.pkl`/`local_index.csv` 생성
+  - `make_sampling_pkl.ipynb` — `all.pkl`에서 지역마다 셀 단위 1차원 LHS로 400칸을 뽑아(중복 제거, 20×20 배치는 무작위)
+    `sampling.pkl` 생성
 - `code/Weight/`
   - `eca_core.py`, `compute_weight_by_initial.py`, `build_regression77_docx.py` — CA 규칙별
     "초기값 → 60세대 시점 셀 개수" 보정 lookup 테이블(`WeightByInitial_new.csv`)을 만드는 코드.
@@ -46,8 +47,8 @@ CNN 학습(`CA_CNN_learning_77.ipynb`)은 GPU가 있으면 훨씬 빠릅니다.
 이미 `DATA/`에 필요한 파일이 다 있다면(→ `DATA_REQUIREMENTS.md`) 1~3번은 건너뛰고 바로
 `PDSI_newweight_81scenarios_regions.ipynb`부터 실행하면 됩니다.
 
-1. `code/SDM/SDM.ipynb` → `code/SDM/process_suitability_maps.ipynb` — 원본 발견 지점·환경변수
-   래스터로부터 `sampling.pkl`/`local_index.csv` 생성
+1. `code/SDM/make_all_pkl.ipynb` → `code/SDM/make_sampling_pkl.ipynb` — MaxEnt 지도로부터
+   `all.pkl`/`local_index.csv`/`sampling.pkl` 생성
 2. `code/Weight/compute_weight_by_initial.py` — `WeightByInitial_new.csv` 생성
    ```bash
    cd code/Weight
@@ -56,7 +57,11 @@ CNN 학습(`CA_CNN_learning_77.ipynb`)은 GPU가 있으면 훨씬 빠릅니다.
 3. `code/CNN/CA_77/CA_CNN_learning_77.ipynb` — CNN 모델 5개 학습
 4. `code/CNN/CA_77/PDSI_newweight_81scenarios_regions.ipynb` (+
    `PDSI_newweight_81scenarios_extra15regions.ipynb`) — type1/type2 PDSI 계산. 결과는
-   `DATA/Results/`에 저장됩니다.
+   `DATA/Results/`에 저장됩니다. 여러 프로세스로 나눠 동시에 돌리려면(기존 결과는 보관 폴더로 옮김):
+   ```bash
+   cd code/CNN/CA_77
+   ./run_pdsi_parallel.sh <보관_폴더_이름> 2 2   # 19개 지역 2조각 + 15개 지역 2조각
+   ```
 
 ## 참고
 
